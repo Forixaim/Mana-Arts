@@ -5,6 +5,8 @@
 *.ipr
 *.iws
 
+yubikey.conf
+
 # IntelliJ
 out/
 # mpeltonen/sbt-idea plugin
