@@ -12,7 +12,6 @@ configureBaseArchive("neoforge")
 neoForge {
     version = neoforgeVersion
 
-
     parchment {
         mappingsVersion.set(libs.versions.parchmentMappings.get())
         minecraftVersion.set(mcVersion)
@@ -75,7 +74,7 @@ dependencies {
 
 mcSafeResources {
     namespace.set(modId)
-    outputPackage.set("forixaim.${modId}.generated")
+    outputPackage.set("$groupId.$modId.generated")
 }
 
 tasks.processResources {
@@ -88,8 +87,9 @@ tasks.processResources {
     }
 }
 
+val groupPath = group.toString().replace('.', '/')
 
-val apiPackage = "net/forixaim/mana_arts/api/**"
+val apiPackage = "$groupPath/mana_arts/api/**"
 val apiJarClassifier = "api"
 
 val apiJar by tasks.registering(Jar::class) {

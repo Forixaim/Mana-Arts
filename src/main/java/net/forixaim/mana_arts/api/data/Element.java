@@ -1,5 +1,6 @@
 package net.forixaim.mana_arts.api.data;
 
+import net.forixaim.mana_arts.api.managers.ElementManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
@@ -12,19 +13,18 @@ import java.util.function.Consumer;
 /**
  * A class representing an element.
  */
-public class Element
+public record Element(ResourceLocation id, double damageModifier, double sizeModifier, double velocityModifier, Consumer<DamageSource> onHitEffect)
 {
-    protected ResourceLocation id;
-    protected double damageModifier;
-    protected double sizeModifier;
-    protected double velocityModifier;
-    protected Consumer<DamageSource> onHitEffect;
+    public static final Consumer<DamageSource> DEFAULT_ON_HIT_EFFECT = damageSource -> {};
+
+    public Element(Builder builder, ResourceLocation id) {
+        this(id, builder.damageModifier, builder.sizeModifier, builder.velocityModifier, builder.onHitEffect);
+    }
 
     public String getTranslationKey()
     {
         return "element.".concat(id.getNamespace()).concat(".").concat(id.getPath());
     }
-
 
     public Component getTranslatedName()
     {
@@ -42,6 +42,7 @@ public class Element
         protected Double damageModifier;
         protected Double sizeModifier;
         protected Double velocityModifier;
+        protected Consumer<DamageSource> onHitEffect;
 
         public Builder()
         {
@@ -49,6 +50,7 @@ public class Element
             sizeModifier = null;
             velocityModifier = null;
             parent = null;
+            onHitEffect = null;
         }
 
         public void defaultTo()
@@ -65,21 +67,45 @@ public class Element
             {
                 velocityModifier = 1.0;
             }
+            if (onHitEffect == null)
+            {
+                onHitEffect = DEFAULT_ON_HIT_EFFECT;
+            }
         }
 
-        public void merge()
+        public Builder merge()
         {
             Deque<Builder> deque = new ArrayDeque<>();
+            Builder result = this;
             Builder current = this;
             while (current != null)
             {
                 deque.push(this);
+                current = ElementManager.getElement(current.parent);
             }
+            while (!deque.isEmpty())
+            {
+                Builder builder = deque.pop();
+                if (builder.damageModifier != null)
+                {
+                    result.damageModifier = builder.damageModifier;
+                }
+                if (builder.sizeModifier != null)
+                {
+                    result.sizeModifier = builder.sizeModifier;
+                }
+                if (builder.velocityModifier != null)
+                {
+                    result.velocityModifier = builder.velocityModifier;
+                }
+            }
+            result.defaultTo();
+            return result;
         }
 
-        public Element build()
+        public Element build(ResourceLocation id)
         {
-            return new Element();
+            return new Element(merge(), id);
         }
     }
 }

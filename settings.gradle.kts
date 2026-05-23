@@ -1,7 +1,6 @@
 pluginManagement {
     repositories {
         mavenLocal()
-
         fun strictMaven(name: String, url: String, filter: InclusiveRepositoryContentDescriptor.() -> Unit) {
             exclusiveContent {
                 forRepository { maven { this.name = name; this.url = uri(url) } }

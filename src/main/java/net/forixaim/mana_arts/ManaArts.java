@@ -2,6 +2,7 @@ package net.forixaim.mana_arts;
 
 import com.mojang.logging.LogUtils;
 import net.forixaim.mana_arts.api.loaders.ElementReloadListener;
+import net.forixaim.mana_arts.registry.ManaArtsRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -29,6 +30,7 @@ public final class ManaArts
     {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::clientSetup);
+        modEventBus.addListener(ManaArtsRegistries::onRegister);
         NeoForge.EVENT_BUS.register(this);
         container.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
