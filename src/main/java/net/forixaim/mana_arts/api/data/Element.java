@@ -36,6 +36,11 @@ public record Element(ResourceLocation id, double damageModifier, double sizeMod
         return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/gui/mana_arts/elements/".concat(id.getPath()).concat(".png"));
     }
 
+    public static Builder builder()
+    {
+        return new Builder();
+    }
+
     public static class Builder
     {
         protected ResourceLocation parent;
@@ -44,13 +49,33 @@ public record Element(ResourceLocation id, double damageModifier, double sizeMod
         protected Double velocityModifier;
         protected Consumer<DamageSource> onHitEffect;
 
-        public Builder()
+        Builder()
         {
             damageModifier = null;
             sizeModifier = null;
             velocityModifier = null;
             parent = null;
             onHitEffect = null;
+        }
+
+        public Builder setBasicAttributes(double damageModifier, double sizeModifier, double velocityModifier)
+        {
+            this.damageModifier = damageModifier;
+            this.sizeModifier = sizeModifier;
+            this.velocityModifier = velocityModifier;
+            return this;
+        }
+
+        public Builder setOnHitEffect(Consumer<DamageSource> onHitEffect)
+        {
+            this.onHitEffect = onHitEffect;
+            return this;
+        }
+
+        public Builder parent(ResourceLocation parent)
+        {
+            this.parent = parent;
+            return this;
         }
 
         public void defaultTo()

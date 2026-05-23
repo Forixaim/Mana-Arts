@@ -9,5 +9,7 @@ public class ManaArtsElements
 {
     public static final ElementRegister REGISTRY = ElementRegister.create(ManaArts.MOD_ID);
 
-    public static final DeferredElement FIRE = REGISTRY.registerElement("fire", () -> Element)
+    public static final DeferredElement LIGHT = REGISTRY.registerElement("light", () -> Element.builder()
+            .setBasicAttributes(0.6, 0.7, 1.6)
+            .setOnHitEffect(damageSource -> {}));
 }
