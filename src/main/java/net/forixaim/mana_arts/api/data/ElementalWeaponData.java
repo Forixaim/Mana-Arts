@@ -4,7 +4,7 @@ import net.forixaim.mana_arts.ManaArts;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.Tag;
 
-public class ManaArtsWeaponData
+public class ElementalWeaponData
 {
     public Holder<Element> imbuedElement;
 
@@ -18,9 +18,9 @@ public class ManaArtsWeaponData
         return imbuedElement;
     }
 
-    public static ManaArtsWeaponData deserialize(Tag tag)
+    public static ElementalWeaponData deserialize(Tag tag)
     {
         ManaArts.LOGGER.debug("There's no deserializer mainly because this is dynamic.");
-        return new ManaArtsWeaponData();
+        return new ElementalWeaponData();
     }
 }
