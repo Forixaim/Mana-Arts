@@ -1,18 +1,22 @@
 package net.forixaim.mana_arts.world.capabilities;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
 import net.forixaim.mana_arts.registry.entries.ManaArtsAttributes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.attachment.IAttachmentHolder;
 
 public class ManaEntity
 {
     private double mana;
+
+    public ManaEntity(IAttachmentHolder iAttachmentHolder)
+    {
+    }
 
     public double getMana() {
         return this.mana;
@@ -55,8 +59,5 @@ public class ManaEntity
 
     public static final Codec<ManaEntity> CODEC = CompoundTag.CODEC.xmap(ManaEntity::new, ManaEntity::serialize);
 
-    public static final StreamCodec<FriendlyByteBuf, ManaEntity> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.COMPOUND_TAG, ManaEntity::serialize,
-            ManaEntity::new
-    );
+    public static final StreamCodec<ByteBuf, ManaEntity> STREAM_CODEC = ByteBufCodecs.COMPOUND_TAG.map(ManaEntity::new, ManaEntity::serialize);
 }
