@@ -10,6 +10,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 public class ManaArtsAttachments
 {
     public static final DeferredRegister<AttachmentType<?>> REGISTRY = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, ManaArts.MOD_ID);
+
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<ManaEntity>> MANA_ENTITY = REGISTRY.register("mana_entity", () ->
             AttachmentType.builder(() -> new ManaEntity())
                     .serialize(ManaEntity.CODEC)

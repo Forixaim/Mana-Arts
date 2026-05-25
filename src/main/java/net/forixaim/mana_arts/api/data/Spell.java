@@ -9,12 +9,11 @@ import yesman.epicfight.world.capabilities.EpicFightCapabilities;
 import yesman.epicfight.world.capabilities.entitypatch.EntityPatch;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public abstract class Spell
 {
-    public static final Spell DEFAULT = new Spell() {};
-
     protected ResourceLocation id;
     public String getTranslationKey()
     {
@@ -31,39 +30,39 @@ public abstract class Spell
         return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/gui/mana_arts/elements/".concat(id.getPath()).concat(".png"));
     }
 
-    public final void preCast(LivingEntity entity)
+    public final void preCast(LivingEntity entity, CastContext context)
     {
-        vanillaOrEpicFight(entity, this::preCastVanilla, this::preCastEpicFight);
+        vanillaOrEpicFight(entity, context, this::preCastVanilla, this::preCastEpicFight);
     }
 
-    private void vanillaOrEpicFight(LivingEntity entity, Consumer<LivingEntity> vanilla, Consumer<LivingEntityPatch<? extends LivingEntity>> epicFight)
+    private void vanillaOrEpicFight(LivingEntity entity, CastContext context, BiConsumer<LivingEntity, CastContext> vanilla, BiConsumer<LivingEntityPatch<? extends LivingEntity>, CastContext> epicFight)
     {
         if (ModList.get().isLoaded(EpicFight.MODID) && EpicFightCapabilities.getEntityPatch(entity, EntityPatch.class) instanceof LivingEntityPatch<? extends LivingEntity> entityPatch)
         {
-            epicFight.accept(entityPatch);
+            epicFight.accept(entityPatch, context);
         }
         else
         {
-            vanilla.accept(entity);
+            vanilla.accept(entity, context);
         }
     }
 
-    public abstract void preCastEpicFight(LivingEntityPatch<? extends LivingEntity> entityPatch);
-    public abstract void preCastVanilla(LivingEntity entity);
+    public abstract void preCastEpicFight(LivingEntityPatch<? extends LivingEntity> entityPatch, CastContext context);
+    public abstract void preCastVanilla(LivingEntity entity, CastContext context);
 
-    public final void cast(LivingEntity entity) {
-        vanillaOrEpicFight(entity, this::castVanilla, this::castEpicFight);
+    public final void cast(LivingEntity entity, CastContext context) {
+        vanillaOrEpicFight(entity, context, this::castVanilla, this::castEpicFight);
     }
 
-    public abstract void castEpicFight(LivingEntityPatch<? extends LivingEntity> entityPatch);
-    public abstract void castVanilla(LivingEntity entity);
+    public abstract void castEpicFight(LivingEntityPatch<? extends LivingEntity> entityPatch, CastContext context);
+    public abstract void castVanilla(LivingEntity entity, CastContext context);
 
-    public final void postCast(LivingEntity entity) {
-        vanillaOrEpicFight(entity, this::postCastVanilla, this::postCastEpicFight);
+    public final void postCast(LivingEntity entity, CastContext context) {
+        vanillaOrEpicFight(entity, context, this::postCastVanilla, this::postCastEpicFight);
     }
 
-    public abstract void postCastEpicFight(LivingEntityPatch<? extends LivingEntity> entityPatch);
-    public abstract void postCastVanilla(LivingEntity entity);
+    public abstract void postCastEpicFight(LivingEntityPatch<? extends LivingEntity> entityPatch, CastContext context);
+    public abstract void postCastVanilla(LivingEntity entity, CastContext context);
 
     public abstract void onTick(LivingEntity entity);
 
