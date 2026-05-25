@@ -3,6 +3,7 @@ package net.forixaim.mana_arts.api.loaders;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import net.forixaim.mana_arts.ManaArts;
+import net.forixaim.mana_arts.api.managers.ElementManager;
 import net.forixaim.mana_arts.netcode.server.DatapackSync;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -25,14 +26,14 @@ public final class ElementReloadListener extends SimpleJsonResourceReloadListene
     @Override
     protected void apply(@NotNull Map<ResourceLocation, JsonElement> resourceLocationJsonElementMap, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller)
     {
-
+        ElementManager.load();
     }
 
     public static void processServerPacket(DatapackSync packet)
     {
         if (packet.packetType() == DatapackSync.PacketType.ELEMENT)
         {
-
+            ElementManager.load();
         }
     }
 }

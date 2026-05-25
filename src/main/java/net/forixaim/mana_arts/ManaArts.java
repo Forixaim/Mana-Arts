@@ -2,6 +2,7 @@ package net.forixaim.mana_arts;
 
 import com.mojang.logging.LogUtils;
 import net.forixaim.mana_arts.api.loaders.ElementReloadListener;
+import net.forixaim.mana_arts.api.loaders.SpellReloadListener;
 import net.forixaim.mana_arts.registry.ManaArtsRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
@@ -41,6 +42,7 @@ public final class ManaArts
     public void addReloadListeners(AddReloadListenerEvent event)
     {
         event.addListener(ElementReloadListener.INSTANCE);
+        event.addListener(SpellReloadListener.INSTANCE);
     }
 
 

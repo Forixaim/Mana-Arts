@@ -1,6 +1,7 @@
 package net.forixaim.mana_arts.api.data;
 
 import net.forixaim.mana_arts.api.managers.ElementManager;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
@@ -102,11 +103,11 @@ public record Element(ResourceLocation id, double damageModifier, double sizeMod
         {
             Deque<Builder> deque = new ArrayDeque<>();
             Builder result = this;
-            Builder current = this;
+            Holder<Builder> current = Holder.direct(this);
             while (current != null)
             {
-                deque.push(this);
-                current = ElementManager.getElement(current.parent);
+                deque.push(current.value());
+                current = ElementManager.getElement(current.value().parent);
             }
             while (!deque.isEmpty())
             {

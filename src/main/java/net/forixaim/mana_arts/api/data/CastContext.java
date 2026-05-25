@@ -2,6 +2,7 @@ package net.forixaim.mana_arts.api.data;
 
 import com.google.common.collect.Maps;
 import io.netty.buffer.ByteBuf;
+import net.forixaim.mana_arts.api.data.serializers.SerializerHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -22,17 +23,13 @@ public record CastContext(ResourceLocation spell, ResourceLocation element, Map<
         CompoundTag result = new CompoundTag();
         result.putString("spell", spell.toString());
         result.putString("element", element.toString());
-        CompoundTag modifiersTag = new CompoundTag();
-        modifiers.forEach((key, value) -> modifiersTag.putDouble(key.toString(), value));
-        result.put("modifiers", modifiersTag);
+        result.put("modifiers", SerializerHelper.serializeModifiers(modifiers));
         return result;
     }
 
     private static CastContext deserialize(CompoundTag tag)
     {
-        Map<ResourceLocation, Double> modifiers = Maps.newHashMap();
-        CompoundTag modifiersTag = tag.getCompound("modifiers");
-        modifiersTag.getAllKeys().forEach(key -> modifiers.put(ResourceLocation.tryParse(key), modifiersTag.getDouble(key)));
-        return new CastContext(ResourceLocation.tryParse(tag.getString("spell")), ResourceLocation.tryParse(tag.getString("element")), modifiers);
+
+        return new CastContext(ResourceLocation.tryParse(tag.getString("spell")), ResourceLocation.tryParse(tag.getString("element")), SerializerHelper.deserializeModifiers(tag.getCompound("modifiers")));
     }
 }

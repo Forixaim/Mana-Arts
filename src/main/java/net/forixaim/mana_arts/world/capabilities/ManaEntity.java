@@ -2,7 +2,11 @@ package net.forixaim.mana_arts.world.capabilities;
 
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
+import net.forixaim.mana_arts.api.data.Element;
+import net.forixaim.mana_arts.api.data.Spell;
+import net.forixaim.mana_arts.api.data.SpellContainer;
 import net.forixaim.mana_arts.registry.entries.ManaArtsAttributes;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -10,9 +14,14 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 
+import java.util.List;
+
 public class  ManaEntity
 {
     private double mana;
+    private Holder<Element> currentElement;
+    private List<SpellContainer> spells;
+    private Holder<Spell> currentSpell;
 
     public ManaEntity(IAttachmentHolder iAttachmentHolder)
     {
