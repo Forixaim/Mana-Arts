@@ -11,5 +11,5 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class ManaArtsEntities
 {
     public static final DeferredRegister<EntityType<?>> REGISTRY = DeferredRegister.create(Registries.ENTITY_TYPE, ManaArts.MOD_ID);
-    public static final DeferredHolder<EntityType<?>, EntityType<Blast>> BLAST = REGISTRY.register("blast", () -> EntityType.Builder.of(Blast::new, MobCategory.MISC).sized(1,1).build("blast"));
+    public static final DeferredHolder<EntityType<?>, EntityType<Blast>> BLAST = REGISTRY.register("blast", () -> EntityType.Builder.of(Blast::new, MobCategory.MISC).sized(1,1).clientTrackingRange(12).build("blast"));
 }

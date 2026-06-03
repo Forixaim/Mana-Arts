@@ -12,12 +12,12 @@ import java.util.function.Consumer;
 /**
  * A class representing an element.
  */
-public record Element(ResourceLocation id, double damageModifier, double sizeModifier, double velocityModifier, Consumer<DamageSource> onHitEffect)
+public record Element(ResourceLocation id, double damageModifier, double sizeModifier, double velocityModifier, Consumer<DamageSource> onHitEffect, ParticleTable table)
 {
     public static final Consumer<DamageSource> DEFAULT_ON_HIT_EFFECT = damageSource -> {};
 
     public Element(Builder builder, ResourceLocation id) {
-        this(id, builder.damageModifier, builder.sizeModifier, builder.velocityModifier, builder.onHitEffect);
+        this(id, builder.damageModifier, builder.sizeModifier, builder.velocityModifier, builder.onHitEffect, builder.table);
     }
 
     public String getTranslationKey()
@@ -47,6 +47,7 @@ public record Element(ResourceLocation id, double damageModifier, double sizeMod
         protected Double sizeModifier;
         protected Double velocityModifier;
         protected Consumer<DamageSource> onHitEffect;
+        protected ParticleTable table;
 
         Builder()
         {
@@ -55,6 +56,7 @@ public record Element(ResourceLocation id, double damageModifier, double sizeMod
             velocityModifier = null;
             parent = null;
             onHitEffect = null;
+            table = new ParticleTable();
         }
 
         public Builder setBasicAttributes(double damageModifier, double sizeModifier, double velocityModifier)

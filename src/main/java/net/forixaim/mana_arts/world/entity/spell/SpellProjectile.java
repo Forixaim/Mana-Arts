@@ -28,8 +28,13 @@ public abstract class SpellProjectile extends Projectile
     }
 
     public CastContext getCastContext() {
+        if (this.builtContext == null) {
+            this.builtContext = CastContext.deserialize(this.entityData.get(CAST_CONTEXT));
+        }
         return this.builtContext;
     }
+
+
 
     @Override
     public @NotNull EntityDimensions getDimensions(@NotNull Pose pose) {

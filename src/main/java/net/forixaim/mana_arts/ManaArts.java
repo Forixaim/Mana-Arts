@@ -3,15 +3,18 @@ package net.forixaim.mana_arts;
 import com.mojang.logging.LogUtils;
 import net.forixaim.mana_arts.api.loaders.ElementReloadListener;
 import net.forixaim.mana_arts.api.loaders.SpellReloadListener;
+import net.forixaim.mana_arts.client.renderer.BlastRenderer;
 import net.forixaim.mana_arts.registry.ManaArtsRegistries;
+import net.forixaim.mana_arts.registry.entries.ManaArtsEntities;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import org.slf4j.Logger;
@@ -31,9 +34,7 @@ public final class ManaArts
     public ManaArts(IEventBus modEventBus, ModContainer container)
     {
         modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(this::clientSetup);
         modEventBus.addListener(ManaArtsRegistries::onRegister);
-
         ManaArtsRegistries.REGISTERS.forEach(reg -> reg.register(modEventBus));
         NeoForge.EVENT_BUS.register(this);
         container.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
@@ -48,8 +49,13 @@ public final class ManaArts
         event.addListener(SpellReloadListener.INSTANCE);
     }
 
-
-    private void clientSetup(final FMLClientSetupEvent event)
+    @EventBusSubscriber(modid = MOD_ID)
+    public static class ClientModEvents
     {
+        @SubscribeEvent
+        public static void registerRenderersEvent(EntityRenderersEvent.RegisterRenderers event)
+        {
+            event.registerEntityRenderer(ManaArtsEntities.BLAST.get(), BlastRenderer::new);
+        }
     }
 }
