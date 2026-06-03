@@ -1,10 +1,11 @@
-package net.forixaim.mana_arts.api.data;
+package net.forixaim.mana_arts.api.data.compat;
 
 import net.forixaim.mana_arts.ManaArts;
+import net.forixaim.mana_arts.api.data.element.Element;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.Tag;
 
-public class ElementalWeaponData
+public final class ElementalWeaponData
 {
     public Holder<Element> imbuedElement;
 

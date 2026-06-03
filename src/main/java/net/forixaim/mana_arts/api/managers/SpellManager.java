@@ -1,7 +1,7 @@
 package net.forixaim.mana_arts.api.managers;
 
 import com.google.common.collect.Maps;
-import net.forixaim.mana_arts.api.data.Spell;
+import net.forixaim.mana_arts.api.data.spell.Spell;
 import net.forixaim.mana_arts.registry.ManaArtsRegistries;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;

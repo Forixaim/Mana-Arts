@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public final class SpellReloadListener extends SimpleJsonResourceReloadListener
+public final class SpellReloadListener extends SimpleJsonResourceReloadListener implements NetSyncListener
 {
     public static final SpellReloadListener INSTANCE = new SpellReloadListener();
 
@@ -29,7 +29,8 @@ public final class SpellReloadListener extends SimpleJsonResourceReloadListener
         SpellManager.load();
     }
 
-    public static void processServerPacket(DatapackSync sync)
+    @Override
+    public void sync(DatapackSync sync)
     {
         if (sync.packetType() == DatapackSync.PacketType.SPELL)
         {

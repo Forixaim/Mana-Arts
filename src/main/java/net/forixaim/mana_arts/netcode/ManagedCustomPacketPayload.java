@@ -2,6 +2,7 @@ package net.forixaim.mana_arts.netcode;
 
 import com.google.common.collect.Maps;
 import net.forixaim.mana_arts.ManaArts;
+import net.forixaim.mana_arts.netcode.client.CastRequest;
 import net.forixaim.mana_arts.netcode.server.DatapackSync;
 import net.forixaim.mana_arts.netcode.server.ManaEntitySync;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -17,7 +18,7 @@ public interface ManagedCustomPacketPayload extends CustomPacketPayload
 
     CustomPacketPayload.Type<DatapackSync> CLIENT_BOUND_DATAPACK_SYNC = registerPayloadType(DatapackSync.class, "client_bound_sync_datapack");
     CustomPacketPayload.Type<ManaEntitySync> CLIENT_BOUND_MANA_ENTITY_SYNC = registerPayloadType(ManaEntitySync.class, "client_bound_sync_mana_entity");
-
+    CustomPacketPayload.Type<CastRequest> SERVER_BOUND_CAST_REQUEST = registerPayloadType(CastRequest.class, "server_bound_cast_request");
 
     static <T extends ManagedCustomPacketPayload> CustomPacketPayload.Type<T> registerPayloadType(Class<T> type, String payloadId)
     {

@@ -1,9 +1,7 @@
 package net.forixaim.mana_arts.registry.registers;
 
-import net.forixaim.mana_arts.api.data.Element;
-import net.forixaim.mana_arts.api.data.Spell;
+import net.forixaim.mana_arts.api.data.spell.Spell;
 import net.forixaim.mana_arts.registry.ManaArtsRegistries;
-import net.forixaim.mana_arts.registry.registers.holders.DeferredElement;
 import net.forixaim.mana_arts.registry.registers.holders.DeferredSpell;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -16,7 +14,7 @@ public class SpellRegister extends DeferredRegister<Spell>
 {
     public static SpellRegister create(String modId)
     {
-        return (SpellRegister) DeferredRegister.create(ManaArtsRegistries.SPELLS, modId);
+        return new SpellRegister(ManaArtsRegistries.RegistryKeys.SPELLS, modId);
     }
 
     protected SpellRegister(ResourceKey<? extends Registry<Spell>> registryKey, String namespace)
@@ -30,7 +28,7 @@ public class SpellRegister extends DeferredRegister<Spell>
                 ManaArtsRegistries.RegistryKeys.SPELLS,
                 ResourceLocation.fromNamespaceAndPath(getNamespace(), id)
         );
-        ;
-        return (DeferredSpell<T>) this.register(id, builder);
+        this.register(id, builder);
+        return new DeferredSpell<>(key);
     }
 }

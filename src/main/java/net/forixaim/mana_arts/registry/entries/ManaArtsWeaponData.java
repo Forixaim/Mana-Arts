@@ -2,7 +2,7 @@ package net.forixaim.mana_arts.registry.entries;
 
 
 import net.forixaim.mana_arts.ManaArts;
-import net.forixaim.mana_arts.api.data.ElementalWeaponData;
+import net.forixaim.mana_arts.api.data.compat.ElementalWeaponData;
 import yesman.epicfight.registry.deferred.CustomDataRegister;
 import yesman.epicfight.registry.deferred.holders.DeferredCustomData;
 import yesman.epicfight.world.capabilities.item.custom.CustomData;

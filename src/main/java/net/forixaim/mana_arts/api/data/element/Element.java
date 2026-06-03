@@ -1,11 +1,9 @@
-package net.forixaim.mana_arts.api.data;
+package net.forixaim.mana_arts.api.data.element;
 
-import net.forixaim.mana_arts.api.managers.ElementManager;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -107,7 +105,6 @@ public record Element(ResourceLocation id, double damageModifier, double sizeMod
             while (current != null)
             {
                 deque.push(current.value());
-                current = ElementManager.getElement(current.value().parent);
             }
             while (!deque.isEmpty())
             {
@@ -131,7 +128,7 @@ public record Element(ResourceLocation id, double damageModifier, double sizeMod
 
         public Element build(ResourceLocation id)
         {
-            return new Element(merge(), id);
+            return new Element(this, id);
         }
     }
 }

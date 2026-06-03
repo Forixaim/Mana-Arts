@@ -1,6 +1,6 @@
 package net.forixaim.mana_arts.registry.registers.holders;
 
-import net.forixaim.mana_arts.api.data.Spell;
+import net.forixaim.mana_arts.api.data.spell.Spell;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.registries.DeferredHolder;
 

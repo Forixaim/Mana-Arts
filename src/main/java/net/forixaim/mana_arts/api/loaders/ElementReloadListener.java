@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public final class ElementReloadListener extends SimpleJsonResourceReloadListener
+public final class ElementReloadListener extends SimpleJsonResourceReloadListener implements NetSyncListener
 {
     public static final ElementReloadListener INSTANCE = new ElementReloadListener();
 
@@ -29,7 +29,8 @@ public final class ElementReloadListener extends SimpleJsonResourceReloadListene
         ElementManager.load();
     }
 
-    public static void processServerPacket(DatapackSync packet)
+    @Override
+    public void sync(DatapackSync packet)
     {
         if (packet.packetType() == DatapackSync.PacketType.ELEMENT)
         {

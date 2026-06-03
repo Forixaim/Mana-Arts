@@ -1,8 +1,7 @@
 package net.forixaim.mana_arts.api.managers;
 
 import com.google.common.collect.Maps;
-import net.forixaim.mana_arts.ManaArts;
-import net.forixaim.mana_arts.api.data.Element;
+import net.forixaim.mana_arts.api.data.element.Element;
 import net.forixaim.mana_arts.registry.ManaArtsRegistries;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
@@ -12,7 +11,7 @@ import java.util.Map;
 public final class ElementManager
 {
     private ElementManager() {}
-    private static final Map<ResourceLocation, Holder<Element.Builder>> ELEMENTS = Maps.newConcurrentMap();
+    private static final Map<ResourceLocation, Holder<Element>> ELEMENTS = Maps.newConcurrentMap();
 
     public static void load()
     {
@@ -20,9 +19,14 @@ public final class ElementManager
         ManaArtsRegistries.ELEMENTS.holders().forEach(element -> ELEMENTS.put(element.key().location(), element));
     }
 
-    public static Holder<Element.Builder> getElement(ResourceLocation id)
+    public static Holder<Element> getElement(ResourceLocation id)
     {
         return ELEMENTS.get(id);
+    }
+
+    public static Holder<Element> getElement(String id)
+    {
+        return ELEMENTS.get(ResourceLocation.parse(id));
     }
 
 }

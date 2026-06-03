@@ -1,7 +1,6 @@
 package net.forixaim.mana_arts.api.data.serializers;
 
 import com.google.common.collect.Maps;
-import net.forixaim.mana_arts.api.data.SpellModifier;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 

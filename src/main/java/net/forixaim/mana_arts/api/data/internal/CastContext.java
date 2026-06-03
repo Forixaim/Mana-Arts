@@ -1,6 +1,5 @@
-package net.forixaim.mana_arts.api.data;
+package net.forixaim.mana_arts.api.data.internal;
 
-import com.google.common.collect.Maps;
 import io.netty.buffer.ByteBuf;
 import net.forixaim.mana_arts.api.data.serializers.SerializerHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -18,7 +17,7 @@ public record CastContext(ResourceLocation spell, ResourceLocation element, Map<
     public static final StreamCodec<ByteBuf, CastContext> STREAM_CODEC =
             ByteBufCodecs.COMPOUND_TAG.map(CastContext::deserialize, CastContext::serialize);
 
-    private CompoundTag serialize()
+    public CompoundTag serialize()
     {
         CompoundTag result = new CompoundTag();
         result.putString("spell", spell.toString());
@@ -27,9 +26,8 @@ public record CastContext(ResourceLocation spell, ResourceLocation element, Map<
         return result;
     }
 
-    private static CastContext deserialize(CompoundTag tag)
+    public static CastContext deserialize(CompoundTag tag)
     {
-
         return new CastContext(ResourceLocation.tryParse(tag.getString("spell")), ResourceLocation.tryParse(tag.getString("element")), SerializerHelper.deserializeModifiers(tag.getCompound("modifiers")));
     }
 }

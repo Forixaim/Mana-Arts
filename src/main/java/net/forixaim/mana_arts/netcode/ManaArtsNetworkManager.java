@@ -1,6 +1,7 @@
 package net.forixaim.mana_arts.netcode;
 
 import net.forixaim.mana_arts.ManaArts;
+import net.forixaim.mana_arts.netcode.client.CastRequest;
 import net.forixaim.mana_arts.netcode.server.DatapackSync;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -21,6 +22,11 @@ public final class ManaArtsNetworkManager
                 ManagedCustomPacketPayload.CLIENT_BOUND_DATAPACK_SYNC,
                 DatapackSync.STREAM_CODEC,
                 ManaArtsPayloadHandler::handleDataPack
+        );
+        registrar.playToServer(
+                ManagedCustomPacketPayload.SERVER_BOUND_CAST_REQUEST,
+                CastRequest.STREAM_CODEC,
+                ManaArtsPayloadHandler::handleCast
         );
     }
 }

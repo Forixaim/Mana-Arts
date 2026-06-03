@@ -1,11 +1,11 @@
-package net.forixaim.mana_arts.api.data;
+package net.forixaim.mana_arts.api.data.element;
 
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.function.BiConsumer;
 
-public class ParticleEffects
+public final class ParticleEffects
 {
     public BiConsumer<Vec3, Level> spawn;
     public BiConsumer<Vec3, Level> tick;

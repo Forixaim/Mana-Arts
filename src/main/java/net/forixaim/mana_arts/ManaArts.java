@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 @Mod(ManaArts.MOD_ID)
 public final class ManaArts
 {
+
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final String MOD_ID = "mana_arts";
 
@@ -32,6 +33,8 @@ public final class ManaArts
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::clientSetup);
         modEventBus.addListener(ManaArtsRegistries::onRegister);
+
+        ManaArtsRegistries.REGISTERS.forEach(reg -> reg.register(modEventBus));
         NeoForge.EVENT_BUS.register(this);
         container.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
