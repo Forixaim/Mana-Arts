@@ -3,7 +3,10 @@ package net.forixaim.mana_arts.netcode;
 import com.google.common.collect.Maps;
 import net.forixaim.mana_arts.ManaArts;
 import net.forixaim.mana_arts.netcode.client.CastRequest;
+import net.forixaim.mana_arts.netcode.client.SpellCycleRequest;
+import net.forixaim.mana_arts.netcode.client.SpellModificationRequest;
 import net.forixaim.mana_arts.netcode.server.DatapackSync;
+import net.forixaim.mana_arts.netcode.server.mana_entity.CurrentSpellIndexSync;
 import net.forixaim.mana_arts.netcode.server.mana_entity.ManaValueSync;
 import net.forixaim.mana_arts.netcode.server.mana_entity.SpellElementSync;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -21,9 +24,13 @@ public interface ManagedCustomPacketPayload extends CustomPacketPayload
     CustomPacketPayload.Type<DatapackSync> CLIENT_BOUND_DATAPACK_SYNC = registerPayloadType(DatapackSync.class, "client_bound_sync_datapack");
     CustomPacketPayload.Type<ManaValueSync> CLIENT_BOUND_MANA_ENTITY_SYNC = registerPayloadType(ManaValueSync.class, "client_bound_sync_mana_entity");
     CustomPacketPayload.Type<SpellElementSync> CLIENT_BOUND_SPELL_ELEMENT_SYNC = registerPayloadType(SpellElementSync.class, "client_bound_sync_spell");
+    CustomPacketPayload.Type<CurrentSpellIndexSync> CLIENT_BOUND_SPELL_INDEX_SYNC = registerPayloadType(CurrentSpellIndexSync.class, "client_bound_sync_spell_index");
 
     //Server-bound
     CustomPacketPayload.Type<CastRequest> SERVER_BOUND_CAST_REQUEST = registerPayloadType(CastRequest.class, "server_bound_cast_request");
+    CustomPacketPayload.Type<SpellModificationRequest> SERVER_BOUND_SPELL_MODIFICATION_REQUEST = registerPayloadType(SpellModificationRequest.class, "server_bound_spell_modification_request");
+    CustomPacketPayload.Type<SpellCycleRequest> SERVER_BOUND_SPELL_CYCLE_REQUEST = registerPayloadType(SpellCycleRequest.class, "server_bound_spell_cycle_request");
+
 
     static <T extends ManagedCustomPacketPayload> CustomPacketPayload.Type<T> registerPayloadType(Class<T> type, String payloadId)
     {

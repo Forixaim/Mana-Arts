@@ -16,9 +16,9 @@ public class ManaHUD implements LayeredDraw.Layer {
     private static final ResourceLocation BAR = ManaArts.identifier("textures/gui/mana_bar/bar.png");
 
     @Override
-    public void render(GuiGraphics guiGraphics, @NotNull DeltaTracker deltaTracker) {
+    public void render(@NotNull GuiGraphics guiGraphics, @NotNull DeltaTracker deltaTracker) {
         Minecraft minecraft = Minecraft.getInstance();
-        assert minecraft.player != null;
+        if (minecraft.player == null || minecraft.player.isCreative() || minecraft.player.isSpectator()) return;
         ManaEntity mage = minecraft.player.getData(ManaArtsAttachments.MANA_ENTITY);
         double mana = mage.getMana();
         double maxMana = minecraft.player.getAttributeValue(ManaArtsAttributes.MAX_MANA);

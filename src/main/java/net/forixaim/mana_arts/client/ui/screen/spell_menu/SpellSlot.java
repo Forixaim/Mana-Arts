@@ -21,6 +21,7 @@ public class SpellSlot extends AbstractButton
     private static final int HEIGHT = 26;
     private static final ResourceLocation BUTTON_TEXTURE = ManaArts.identifier("textures/gui/spell_screen/spell_slot.png");
     private static final ResourceLocation BUTTON_TEXTURE_PRESSED = ManaArts.identifier("textures/gui/spell_screen/spell_slot_selected.png");
+    private static final ResourceLocation BUTTON_TEXTURE_HOVERED = ManaArts.identifier("textures/gui/spell_screen/spell_slot_hovered.png");
     private static final ResourceLocation ADD_ICON = ManaArts.identifier("textures/gui/spell_screen/add.png");
     public static final ResourceLocation EQUIPPED_BORDER = ManaArts.identifier("textures/gui/spell_screen/equipped_border.png");
 
@@ -65,6 +66,10 @@ public class SpellSlot extends AbstractButton
         if (selected)
         {
             guiGraphics.blit(BUTTON_TEXTURE_PRESSED, getX(), getY(), 0, 0, WIDTH, HEIGHT, 26, 26);
+        }
+        else if (isHoveredOrFocused())
+        {
+            guiGraphics.blit(BUTTON_TEXTURE_HOVERED, getX(), getY(), 0, 0, WIDTH, HEIGHT, 26, 26);
         }
         else
         {

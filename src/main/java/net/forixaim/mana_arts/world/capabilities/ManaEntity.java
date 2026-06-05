@@ -7,12 +7,17 @@ import net.forixaim.mana_arts.ManaArts;
 import net.forixaim.mana_arts.api.data.element.Element;
 import net.forixaim.mana_arts.api.data.internal.SpellContainer;
 import net.forixaim.mana_arts.api.managers.ElementManager;
+import net.forixaim.mana_arts.client.ui.screen.spell_menu.SpellScreen;
+import net.forixaim.mana_arts.netcode.server.mana_entity.CurrentSpellIndexSync;
 import net.forixaim.mana_arts.netcode.server.mana_entity.ManaEntityPacket;
 import net.forixaim.mana_arts.netcode.server.mana_entity.ManaValueSync;
 import net.forixaim.mana_arts.netcode.server.mana_entity.SpellElementSync;
 import net.forixaim.mana_arts.registry.entries.ManaArtsAttributes;
 import net.forixaim.mana_arts.registry.entries.ManaArtsElements;
 import net.forixaim.mana_arts.registry.entries.ManaArtsSpells;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -23,6 +28,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.common.util.INBTSerializable;
@@ -43,9 +50,51 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
         return spells.get(currentSpell);
     }
 
+    public int getCurrentSpellIndex() {
+        return currentSpell;
+    }
+
     public void setCurrentSpell(int index) {
         currentSpell = index;
+        CurrentSpellIndexSync packet = new CurrentSpellIndexSync(currentSpell);
+        if (original instanceof ServerPlayer serverPlayer)
+        {
+            PacketDistributor.sendToPlayer(serverPlayer, packet);
+        }
     }
+
+    public void onSyncSpell(CurrentSpellIndexSync packet)
+    {
+        currentSpell = packet.index();
+        if (original instanceof LocalPlayer)
+        {
+            Screen currentScreen = Minecraft.getInstance().screen;
+            if (currentScreen instanceof SpellScreen spellScreen)
+            {
+                spellScreen.sync();
+            }
+        }
+    }
+
+    public void cycleNextSpell() {
+        setCurrentSpell( (currentSpell + 1) % spells.size());
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void cycleNextSpellNoSync() {
+        //This is used for client prediction
+        currentSpell = (currentSpell + 1) % spells.size();
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void cyclePreviousSpellNoSync() {
+        currentSpell = (currentSpell - 1) % spells.size();
+    }
+
+    public void cyclePreviousSpell() {
+        setCurrentSpell( (currentSpell - 1) % spells.size());
+    }
+
 
     public ManaEntity(IAttachmentHolder iAttachmentHolder) {
         this();
@@ -119,6 +168,7 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
         this.setMana(player, this.mana + amount);
     }
 
+    @OnlyIn(Dist.CLIENT)
     public void onServerSync(SyncType type, ManaEntityPacket packet)
     {
         switch (type)
@@ -129,13 +179,27 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
                     mana = tag;
                 }
             }
-            case SPELLS, ELEMENTS -> {
+            case SPELLS, ELEMENTS, CURRENT_SPELL -> {
                 if (packet instanceof SpellElementSync(CompoundTag tag, SpellElementSync.SpelLElementSyncType syncType))
                 {
                     switch (syncType)
                     {
-                        case ELEMENT -> this.elements.addAll(deserializeElements(tag.getList("elements", Tag.TAG_STRING)));
-                        case SPELL -> this.spells.addAll(deserializeSpells(tag.getList("spells", Tag.TAG_COMPOUND)));
+                        case ELEMENT -> {
+                            this.elements.clear();
+                            this.elements.addAll(deserializeElements(tag.getList("elements", Tag.TAG_STRING)));
+                        }
+                        case SPELL -> {
+                            this.spells.clear();
+                            this.spells.addAll(deserializeSpells(tag.getList("spells", Tag.TAG_COMPOUND)));
+                        }
+                    }
+                    if (original instanceof LocalPlayer localPlayer)
+                    {
+                        Screen currentScreen = Minecraft.getInstance().screen;
+                        if (currentScreen instanceof SpellScreen spellScreen)
+                        {
+                            spellScreen.sync();
+                        }
                     }
                 }
             }
@@ -171,12 +235,16 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
     {
         CompoundTag tag = new CompoundTag();
         tag.put("spells", serializeSpells());
+        SpellElementSync packet = new SpellElementSync(tag, SpellElementSync.SpelLElementSyncType.SPELL);
+        PacketDistributor.sendToPlayer(serverPlayer, packet);
     }
 
     public void syncElements(ServerPlayer serverPlayer)
     {
         CompoundTag tag = new CompoundTag();
         tag.put("elements", serializeElements());
+        SpellElementSync packet = new SpellElementSync(tag, SpellElementSync.SpelLElementSyncType.ELEMENT);
+        PacketDistributor.sendToPlayer(serverPlayer, packet);
     }
 
     private ListTag serializeSpells()
@@ -258,8 +326,7 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
         ALL,
         MANA,
         SPELLS,
-        ELEMENTS
-
-
+        ELEMENTS,
+        CURRENT_SPELL
     }
 }

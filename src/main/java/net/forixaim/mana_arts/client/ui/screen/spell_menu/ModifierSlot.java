@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ModifierSlot extends AbstractWidget
 {
-    private static final int WIDTH = 189;
+    private static final int WIDTH = 187;
     private static final int HEIGHT = 26;
     private static final ResourceLocation MODIFIER_SLOT_TEXTURE = ManaArts.identifier("textures/gui/spell_screen/modifier.png");
     private final Holder<SpellModifier<?>> modifier;
@@ -31,7 +31,7 @@ public class ModifierSlot extends AbstractWidget
 
     @Override
     protected void renderWidget(GuiGraphics guiGraphics, int i, int i1, float v) {
-        guiGraphics.blit(MODIFIER_SLOT_TEXTURE, getX(), getY(), 0, 0, WIDTH, HEIGHT, 189, 26);
+        guiGraphics.blit(MODIFIER_SLOT_TEXTURE, getX(), getY(), 0, 0, WIDTH, HEIGHT, 187, 26);
         guiGraphics.drawString(Minecraft.getInstance().font, getKey(), getX() + 10, getY() + 5, 0xFFFFFF);
     }
 

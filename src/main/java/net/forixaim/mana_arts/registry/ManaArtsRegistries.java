@@ -32,6 +32,7 @@ public class ManaArtsRegistries
             ManaArtsElements.REGISTRY,
             ManaArtsAttributes.REGISTRY,
             ManaArtsAttachments.REGISTRY,
+            ManaArtsSpellModifiers.REGISTRY,
             ManaArtsWeaponData.REGISTRY,
             ManaArtsSkills.REGISTRY
     );

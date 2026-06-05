@@ -10,6 +10,8 @@ import org.lwjgl.glfw.GLFW;
 public class ManaArtsKeyMapping
 {
     public static KeyMapping CAST_SPELL = mapping(LangKeys.KEY_CAST_SPELL, GLFW.GLFW_KEY_Z);
+    public static KeyMapping CYCLE_SPELL_PREVIOUS = mapping(LangKeys.KEY_CYCLE_SPELL_PREVIOUS, GLFW.GLFW_KEY_X);
+    public static KeyMapping CYCLE_SPELL_NEXT = mapping(LangKeys.KEY_CYCLE_SPELL_NEXT, GLFW.GLFW_KEY_C);
     public static KeyMapping OPEN_SPELL_MENU = mapping(LangKeys.KEY_OPEN_SPELL_MENU, GLFW.GLFW_KEY_K);
 
 
