@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 public class SpellRegister extends DeferredRegister<Spell>
 {
@@ -22,7 +22,7 @@ public class SpellRegister extends DeferredRegister<Spell>
         super(registryKey, namespace);
     }
 
-    public <T extends Spell> DeferredSpell<T> registerSpell(String id, Supplier<T> builder)
+    public <T extends Spell> DeferredSpell<T> registerSpell(String id, Function<ResourceLocation, T> builder)
     {
         ResourceKey<Spell> key = ResourceKey.create(
                 ManaArtsRegistries.RegistryKeys.SPELLS,

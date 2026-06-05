@@ -4,7 +4,8 @@ import com.google.common.collect.Maps;
 import net.forixaim.mana_arts.ManaArts;
 import net.forixaim.mana_arts.netcode.client.CastRequest;
 import net.forixaim.mana_arts.netcode.server.DatapackSync;
-import net.forixaim.mana_arts.netcode.server.ManaEntitySync;
+import net.forixaim.mana_arts.netcode.server.mana_entity.ManaValueSync;
+import net.forixaim.mana_arts.netcode.server.mana_entity.SpellElementSync;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -16,8 +17,12 @@ public interface ManagedCustomPacketPayload extends CustomPacketPayload
 {
     Map<Class<? extends CustomPacketPayload>, Type<?>> PAYLOAD_TYPES = Maps.newHashMap();
 
+    //Client-bound
     CustomPacketPayload.Type<DatapackSync> CLIENT_BOUND_DATAPACK_SYNC = registerPayloadType(DatapackSync.class, "client_bound_sync_datapack");
-    CustomPacketPayload.Type<ManaEntitySync> CLIENT_BOUND_MANA_ENTITY_SYNC = registerPayloadType(ManaEntitySync.class, "client_bound_sync_mana_entity");
+    CustomPacketPayload.Type<ManaValueSync> CLIENT_BOUND_MANA_ENTITY_SYNC = registerPayloadType(ManaValueSync.class, "client_bound_sync_mana_entity");
+    CustomPacketPayload.Type<SpellElementSync> CLIENT_BOUND_SPELL_ELEMENT_SYNC = registerPayloadType(SpellElementSync.class, "client_bound_sync_spell");
+
+    //Server-bound
     CustomPacketPayload.Type<CastRequest> SERVER_BOUND_CAST_REQUEST = registerPayloadType(CastRequest.class, "server_bound_cast_request");
 
     static <T extends ManagedCustomPacketPayload> CustomPacketPayload.Type<T> registerPayloadType(Class<T> type, String payloadId)

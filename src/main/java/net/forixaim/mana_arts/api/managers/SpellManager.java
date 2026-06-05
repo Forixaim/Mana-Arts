@@ -19,6 +19,11 @@ public final class SpellManager
         ManaArtsRegistries.SPELLS.holders().forEach(spell -> SPELLS.put(spell.key().location(), spell));
     }
 
+    public static Holder<Spell> getSpell(ResourceLocation resourceLocation)
+    {
+        return SPELLS.get(resourceLocation);
+    }
+
     public static Holder<Spell> getSpell(String resourceLocation)
     {
         return SPELLS.get(ResourceLocation.tryParse(resourceLocation));

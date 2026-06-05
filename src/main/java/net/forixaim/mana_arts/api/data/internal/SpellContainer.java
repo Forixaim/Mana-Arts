@@ -5,6 +5,7 @@ import net.forixaim.mana_arts.api.data.element.Element;
 import net.forixaim.mana_arts.api.data.spell.Spell;
 import net.forixaim.mana_arts.api.data.serializers.SerializerHelper;
 import net.forixaim.mana_arts.api.managers.ElementManager;
+import net.forixaim.mana_arts.api.managers.ModifierManager;
 import net.forixaim.mana_arts.api.managers.SpellManager;
 import net.forixaim.mana_arts.netcode.client.CastRequest;
 import net.minecraft.core.Holder;
@@ -57,6 +58,11 @@ public class SpellContainer
         this.element = element;
     }
 
+    public Holder<Element> getElement()
+    {
+        return element;
+    }
+
     public Map<ResourceLocation, Double> getModifiers()
     {
         return modifiers;
@@ -70,7 +76,17 @@ public class SpellContainer
     public void setSpell(Holder<Spell> spell)
     {
         this.spell = spell;
+        loadModifiers();
     }
+
+    private void loadModifiers()
+    {
+        this.modifiers.clear();
+        this.spell.value().getAllowedModifiers().forEach(
+                holder -> this.modifiers.put(holder, ModifierManager.getModifier(holder).value().defaultValue())
+        );
+    }
+
 
     @OnlyIn(Dist.CLIENT)
     public void sendCastRequest() {
@@ -115,6 +131,6 @@ public class SpellContainer
             Map<ResourceLocation, Double> modifiers = SerializerHelper.deserializeModifiers(tag.getCompound("modifiers"));
             result.modifiers.putAll(modifiers);
         }
-        return new SpellContainer();
+        return result;
     }
 }

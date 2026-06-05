@@ -26,7 +26,7 @@ public final class ElementManager
 
     public static Holder<Element> getElement(String id)
     {
-        return ELEMENTS.get(ResourceLocation.parse(id));
+        return ELEMENTS.get(ResourceLocation.tryParse(id));
     }
 
 }

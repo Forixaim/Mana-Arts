@@ -11,6 +11,5 @@ public class ManaArtsAttributes
 {
     public static final DeferredRegister<Attribute> REGISTRY = DeferredRegister.create(Registries.ATTRIBUTE, ManaArts.MOD_ID);
 
-    public static final DeferredHolder<Attribute, Attribute> MAX_MANA = REGISTRY.register("max_mana", () -> new RangedAttribute("attribute.name." + ManaArts.MOD_ID + ".max_mana", 100.0D, 0.0D, 1000000));
-
+    public static final DeferredHolder<Attribute, Attribute> MAX_MANA = REGISTRY.register("max_mana", () -> new RangedAttribute("attribute.name." + ManaArts.MOD_ID + ".max_mana", 100.0D, 0.0D, 1000000).setSyncable(true));
 }

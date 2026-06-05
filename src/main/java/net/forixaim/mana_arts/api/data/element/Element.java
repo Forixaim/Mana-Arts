@@ -4,17 +4,19 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
  * A class representing an element.
  */
-public record Element(ResourceLocation id, double damageModifier, double sizeModifier, double velocityModifier, Consumer<DamageSource> onHitEffect, ParticleTable table)
+public record Element(ResourceLocation id, double damageModifier, double sizeModifier, double velocityModifier, BiConsumer<DamageSource, LivingEntity> onHitEffect, ParticleTable table)
 {
-    public static final Consumer<DamageSource> DEFAULT_ON_HIT_EFFECT = damageSource -> {};
+    public static final BiConsumer<DamageSource, LivingEntity> DEFAULT_ON_HIT_EFFECT = (damageSource, livingEntity) -> {};
 
     public Element(Builder builder, ResourceLocation id) {
         this(id, builder.damageModifier, builder.sizeModifier, builder.velocityModifier, builder.onHitEffect, builder.table);
@@ -32,7 +34,7 @@ public record Element(ResourceLocation id, double damageModifier, double sizeMod
 
     public ResourceLocation getIconLocation()
     {
-        return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/gui/mana_arts/elements/".concat(id.getPath()).concat(".png"));
+        return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/elements/".concat(id.getPath()).concat(".png"));
     }
 
     public static Builder builder()
@@ -46,7 +48,7 @@ public record Element(ResourceLocation id, double damageModifier, double sizeMod
         protected Double damageModifier;
         protected Double sizeModifier;
         protected Double velocityModifier;
-        protected Consumer<DamageSource> onHitEffect;
+        protected BiConsumer<DamageSource, LivingEntity> onHitEffect;
         protected ParticleTable table;
 
         Builder()
@@ -67,7 +69,7 @@ public record Element(ResourceLocation id, double damageModifier, double sizeMod
             return this;
         }
 
-        public Builder setOnHitEffect(Consumer<DamageSource> onHitEffect)
+        public Builder setOnHitEffect(BiConsumer<DamageSource, LivingEntity> onHitEffect)
         {
             this.onHitEffect = onHitEffect;
             return this;
@@ -76,6 +78,12 @@ public record Element(ResourceLocation id, double damageModifier, double sizeMod
         public Builder parent(ResourceLocation parent)
         {
             this.parent = parent;
+            return this;
+        }
+
+        public Builder modifyEffectTable(Consumer<ParticleTable> consumer)
+        {
+            consumer.accept(table);
             return this;
         }
 

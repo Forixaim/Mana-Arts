@@ -1,6 +1,9 @@
 package net.forixaim.mana_arts.api.data.spell;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.forixaim.mana_arts.api.data.internal.CastContext;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,13 +13,27 @@ import yesman.epicfight.world.capabilities.EpicFightCapabilities;
 import yesman.epicfight.world.capabilities.entitypatch.EntityPatch;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 
 public abstract class Spell
 {
     protected ResourceLocation id;
     public double baseCost;
-    protected double baseDamage;
+    protected final List<ResourceLocation> allowedModifiers = Lists.newArrayList();
+
+    public List<ResourceLocation> getAllowedModifiers() {
+        return ImmutableList.copyOf(allowedModifiers);
+    }
+
+    public void addAllowedModifier(Holder<SpellModifier<?>> id)
+    {
+        allowedModifiers.add(ResourceLocation.parse(id.getRegisteredName()));
+    }
+
+    public Spell(ResourceLocation id) {
+        this.id = id;
+    }
 
     public String getTranslationKey()
     {
@@ -30,7 +47,7 @@ public abstract class Spell
 
     public ResourceLocation getIconLocation()
     {
-        return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/gui/mana_arts/elements/".concat(id.getPath()).concat(".png"));
+        return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/gui/spell_icons/".concat(id.getPath()).concat(".png"));
     }
 
     public void preCast(LivingEntity entity, CastContext context)
@@ -73,8 +90,4 @@ public abstract class Spell
         }
     }
 
-    public static class Builder
-    {
-
-    }
 }

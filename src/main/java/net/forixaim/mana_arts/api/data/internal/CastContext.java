@@ -1,7 +1,12 @@
 package net.forixaim.mana_arts.api.data.internal;
 
 import io.netty.buffer.ByteBuf;
+import net.forixaim.mana_arts.api.data.element.Element;
 import net.forixaim.mana_arts.api.data.serializers.SerializerHelper;
+import net.forixaim.mana_arts.api.data.spell.OffensiveSpell;
+import net.forixaim.mana_arts.api.data.spell.Spell;
+import net.forixaim.mana_arts.api.managers.ElementManager;
+import net.forixaim.mana_arts.api.managers.SpellManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -24,6 +29,17 @@ public record CastContext(ResourceLocation spell, ResourceLocation element, Map<
         result.putString("element", element.toString());
         result.put("modifiers", SerializerHelper.serializeModifiers(modifiers));
         return result;
+    }
+
+    public float calculateDamage()
+    {
+        Spell spell = SpellManager.getSpell(this.spell).value();
+        Element element = ElementManager.getElement(this.element).value();
+        if (spell instanceof OffensiveSpell offensiveSpell)
+        {
+            return (float) (offensiveSpell.getBaseDamage() * element.damageModifier());
+        }
+        return 0;
     }
 
     public static CastContext deserialize(CompoundTag tag)

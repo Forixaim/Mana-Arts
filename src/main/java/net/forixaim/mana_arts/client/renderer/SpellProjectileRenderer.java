@@ -23,7 +23,7 @@ public abstract class SpellProjectileRenderer<T extends SpellProjectile> extends
         if (pEntity.getCastContext().element() != null)
         {
             Holder<Element> element = ElementManager.getElement(pEntity.getCastContext().element());
-            return element.value().table().projectileRenderOverrides.containsKey(pEntity);
+            return element.value().table().getProjectileRenderOverrides().containsKey(pEntity.getType());
         }
         return false;
     }
@@ -34,9 +34,9 @@ public abstract class SpellProjectileRenderer<T extends SpellProjectile> extends
         if (pEntity.getCastContext() != null && pEntity.getCastContext().element() != null)
         {
             Holder<Element> element = ElementManager.getElement(pEntity.getCastContext().element());
-            if (element.value().table().projectileRenderOverrides.containsKey(pEntity))
+            if (element.value().table().getProjectileRenderOverrides().containsKey(pEntity.getType()))
             {
-                element.value().table().projectileRenderOverrides.get(pEntity).accept(pEntity, entityYaw, partialTick, poseStack, bufferSource, packedLight, this);
+                element.value().table().getProjectileRenderOverrides().get(pEntity.getType()).accept(pEntity, entityYaw, partialTick, poseStack, bufferSource, packedLight, this);
             }
         }
     }

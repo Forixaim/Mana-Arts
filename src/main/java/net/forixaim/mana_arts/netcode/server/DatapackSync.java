@@ -31,10 +31,6 @@ public record DatapackSync(PacketType packetType, List<CompoundTag> tags) implem
         this(packetType, new ArrayList<>());
     }
 
-    public void addTag(CompoundTag compound) {
-        this.tags.add(compound);
-    }
-
     public enum PacketType implements StringRepresentable
     {
         ELEMENT(ElementReloadListener.INSTANCE), SPELL(SpellReloadListener.INSTANCE);

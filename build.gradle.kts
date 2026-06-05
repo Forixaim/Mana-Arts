@@ -70,6 +70,7 @@ dependencies {
     runtimeOnly(libs.bundles.dummyBundle)
     implementation(libs.epicskills)
     implementation(libs.battleArtsAPI)
+    implementation(libs.ldlib)
 }
 
 mcSafeResources {

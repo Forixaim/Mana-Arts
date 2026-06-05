@@ -21,6 +21,7 @@ public final class ElementalWeaponData
 
     public static ElementalWeaponData deserialize(Tag tag)
     {
+
         ManaArts.LOGGER.debug("There's no deserializer mainly because this is dynamic.");
         return new ElementalWeaponData();
     }

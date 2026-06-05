@@ -5,11 +5,10 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.function.BiConsumer;
 
-public final class ParticleEffects
-{
-    public BiConsumer<Vec3, Level> spawn;
-    public BiConsumer<Vec3, Level> tick;
-    public BiConsumer<Vec3, Level> onHitBlock;
-    public BiConsumer<Vec3, Level> onHitEntity;
-    public BiConsumer<Vec3, Level> onExpire;
-}
+public record ParticleEffects(
+        BiConsumer<Vec3, Level> spawn,
+        BiConsumer<Vec3, Level> tick,
+        BiConsumer<Vec3, Level> onHitBlock,
+        BiConsumer<Vec3, Level> onHitEntity,
+        BiConsumer<Vec3, Level> onExpire
+) {}
