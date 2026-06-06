@@ -15,6 +15,7 @@ public class SpellSlot extends AbstractButton
 {
     private boolean selected = false;
     private boolean equipped = false;
+    private boolean hidden = false;
     private final SpellContainer spellHolder;
     private final OnSlotSelected pressCallback;
     private static final int WIDTH = 26;
@@ -39,6 +40,14 @@ public class SpellSlot extends AbstractButton
     public void setSpell(Holder<Spell> newSpellHolder) {
         this.spellHolder.setSpell(newSpellHolder);
         this.setMessage(newSpellHolder.value().getTranslatedName());
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
     public void setEquipped(boolean equipped) {
