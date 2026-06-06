@@ -1,6 +1,7 @@
 package net.forixaim.mana_arts.client.ui.screen.spell_menu;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import net.forixaim.mana_arts.api.data.internal.SpellContainer;
 import net.forixaim.mana_arts.api.managers.ModifierManager;
 import net.forixaim.mana_arts.generated.LangKeys;
@@ -11,9 +12,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SpellScreen extends Screen
@@ -21,11 +25,14 @@ public class SpellScreen extends Screen
     private int focusedSlot;
     int leftPos;
     int topPos;
+
     int initialTop;
     int initialLeft;
     ManaEntity mage;
     private final List<SpellContainer> spellSlots = Lists.newArrayList();
     private final List<SpellSlot> visibleSlots = Lists.newArrayList();
+    private final Map<ResourceLocation, Double> modifiersMap = Maps.newHashMap();
+    private final List<ModifierSlot> modifiers = Lists.newArrayList();
     public SpellScreen() {
         super(Component.translatable(LangKeys.MANA_ARTS_GUI_SPELL_MENU));
     }
@@ -47,8 +54,6 @@ public class SpellScreen extends Screen
 
     public void sync()
     {
-        this.clearWidgets();
-        refreshBackground();
         refreshSpells();
         refreshVisibleSlots();
         renderSpellSlots();
@@ -69,19 +74,14 @@ public class SpellScreen extends Screen
 
     private void refreshVisibleSlots()
     {
+        for (SpellSlot slot : visibleSlots)
+        {
+            this.removeWidget(slot);
+        }
         this.visibleSlots.clear();
         for (int i = 0; i < spellSlots.size(); i++)
         {
-            final int slotIndex = i;
-            SpellSlot resultingSlot = new SpellSlot(initialLeft, initialTop + 26 * i, 26, 26, spellSlots.get(i), (clickedSpell, clickedSlot) -> {
-                this.focusedSlot = slotIndex;
-                deselectOthers();
-                clickedSlot.select();
-            });
-            if (mage.getCurrentSpellIndex() == i)
-            {
-                resultingSlot.setEquipped(true);
-            }
+            SpellSlot resultingSlot = getSpellSlot(i);
             visibleSlots.add(resultingSlot);
             if (visibleSlots.size() == 6)
             {
@@ -97,8 +97,39 @@ public class SpellScreen extends Screen
         {
             visibleSlots.add(new SpellSlot(initialLeft, initialTop + 26 * visibleSlots.size(), 26, 26, null, (clickedSpell, clickedSlot) -> {
                 onAdd();
-            }));
+        }));
         }
+    }
+
+    private @NotNull SpellSlot getSpellSlot(int i) {
+        final int slotIndex = i;
+        SpellSlot resultingSlot = new SpellSlot(initialLeft, initialTop + 26 * i, 26, 26, spellSlots.get(i), (clickedSpell, clickedSlot) -> {
+            int x = leftPos + 50;
+            this.focusedSlot = slotIndex;
+            this.modifiersMap.clear();
+            this.modifiersMap.putAll(clickedSpell.getModifiers());
+            this.modifiers.clear();
+            SpellTypeModifier spellTypeModifier = new SpellTypeModifier(x, initialTop, 187, 26, clickedSpell.getSpell());
+            ElementTypeModifier elementTypeModifier = new ElementTypeModifier(x, initialTop + 26, 187, 26, clickedSpell.getElement());
+            List<Map.Entry<ResourceLocation, Double>> entries = modifiersMap.entrySet().stream().toList();
+            for (int j = 0; j < entries.size(); j++)
+            {
+                ModifierSlot result = new ModifierSlot(x, initialTop + 26 * (j + 2), 187, 26, ModifierManager.getModifier(entries.get(j).getKey()), entries.get(j).getValue());
+                if (j == 4)
+                {
+                    break;
+                }
+                modifiers.add(result);
+            }
+
+            deselectOthers();
+            clickedSlot.select();
+        });
+        if (mage.getCurrentSpellIndex() == i)
+        {
+            resultingSlot.setEquipped(true);
+        }
+        return resultingSlot;
     }
 
     private void refreshSpells()
@@ -134,10 +165,6 @@ public class SpellScreen extends Screen
     @Override
     public void tick() {
         super.tick();
-        if (this.focusedSlot != -1)
-        {
-            renderModifiers(spellSlots.get(this.focusedSlot));
-        }
     }
 
     private void renderModifiers(SpellContainer spellContainer)
