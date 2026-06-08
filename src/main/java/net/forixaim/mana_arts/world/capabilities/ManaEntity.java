@@ -15,6 +15,8 @@ import net.forixaim.mana_arts.netcode.server.mana_entity.SpellElementSync;
 import net.forixaim.mana_arts.registry.entries.ManaArtsAttributes;
 import net.forixaim.mana_arts.registry.entries.ManaArtsElements;
 import net.forixaim.mana_arts.registry.entries.ManaArtsSpells;
+import net.forixaim.mana_arts.world.ManaSource;
+import net.forixaim.mana_arts.world.ManaSourceTags;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
@@ -41,6 +43,7 @@ import java.util.List;
 public class ManaEntity implements INBTSerializable<CompoundTag>
 {
     private double mana;
+    private double overchargeReserve;
     private final List<Holder<Element>> elements;
     private final List<SpellContainer> spells;
     private IAttachmentHolder original;
@@ -158,14 +161,25 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
         }
     }
 
-    public void setMana(Player player, double amount) {
+    public void setMana(Player player, ManaSource source) {
         double max = player.getAttributeValue(ManaArtsAttributes.MAX_MANA);
-        this.mana = Mth.clamp(amount, 0.0, max);
+        double amount = source.amount();
+        if (this.mana + source.amount() > max && source.is(ManaSourceTags.MANUAL_CHARGING))
+        {
+            double toSub = max - this.getMana();
+            this.mana = Mth.clamp(amount, 0.0, max);
+            amount -= toSub;
+            overchargeReserve = Mth.clamp(amount, 0.0, max);
+        }
+        else
+        {
+            this.mana = Mth.clamp(amount, 0.0, max);
+        }
         sync(SyncType.MANA);
     }
 
-    public void modifyMana(Player player, double amount) {
-        this.setMana(player, this.mana + amount);
+    public void modifyMana(Player player, ManaSource source) {
+        this.setMana(player, source);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -174,9 +188,10 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
         switch (type)
         {
             case MANA -> {
-                if (packet instanceof ManaValueSync(Double tag))
+                if (packet instanceof ManaValueSync(Double syncMana, Double overcharge))
                 {
-                    mana = tag;
+                    this.mana = syncMana;
+                    this.overchargeReserve = overcharge;
                 }
             }
             case SPELLS, ELEMENTS, CURRENT_SPELL -> {
@@ -226,9 +241,8 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
 
     private void syncMana(ServerPlayer serverPlayer)
     {
-        ManaValueSync packet = new ManaValueSync(mana);
+        ManaValueSync packet = new ManaValueSync(mana, overchargeReserve);
         PacketDistributor.sendToPlayer(serverPlayer, packet);
-
     }
 
     public void syncSpells(ServerPlayer serverPlayer)

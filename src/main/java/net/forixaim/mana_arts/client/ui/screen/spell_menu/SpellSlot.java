@@ -3,6 +3,7 @@ package net.forixaim.mana_arts.client.ui.screen.spell_menu;
 import net.forixaim.mana_arts.ManaArts;
 import net.forixaim.mana_arts.api.data.internal.SpellContainer;
 import net.forixaim.mana_arts.api.data.spell.Spell;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -78,6 +79,8 @@ public class SpellSlot extends AbstractButton
         }
         else if (isHoveredOrFocused())
         {
+            Component str = spellHolder != null ? Component.translatable(spellHolder.getElement().value().getTranslationKey()).append(" ").append(spellHolder.getSpell().value().getTranslatedName()): Component.translatable("text.mana_arts.add_spell");
+            guiGraphics.drawStringWithBackdrop(Minecraft.getInstance().font, str, mouseX, mouseY, 0, 0xFFFFFF);
             guiGraphics.blit(BUTTON_TEXTURE_HOVERED, getX(), getY(), 0, 0, WIDTH, HEIGHT, 26, 26);
         }
         else

@@ -37,7 +37,7 @@ public abstract class Spell
 
     public String getTranslationKey()
     {
-        return "element.".concat(id.getNamespace()).concat(".").concat(id.getPath());
+        return "spell.".concat(id.getNamespace()).concat(".").concat(id.getPath());
     }
 
     public Component getTranslatedName()
