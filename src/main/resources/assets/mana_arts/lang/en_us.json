@@ -10,5 +10,7 @@
   "mana_arts.gui.spell_menu": "Created Spells",
   "text.mana_arts.add_spell": "Add Spell",
   "modifier.mana_arts.projectile_size": "Projectile Size",
-  "modifier.mana_arts.blast_radius": "Blast Radius"
+  "modifier.mana_arts.blast_radius": "Blast Radius",
+  "element.mana_arts.light": "Light",
+  "spell.mana_arts.blast": "Blast"
 }
