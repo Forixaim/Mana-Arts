@@ -1,0 +1,18 @@
+{
+  "light.shoot": {
+    "category": "master",
+    "subtitle": "sounds.mana_arts.light.shoot",
+    "sounds": [
+      {
+        "name": "mana_arts:light/shoot",
+        "stream": false
+      }
+    ]
+  },
+  "light.explosion": {
+    "category": "master",
+    "subtitle": "sounds.mana_arts.light.explosion",
+    "sounds":[{"name":"mana_arts:light/explosion", "stream":false}]
+  }
+}
+

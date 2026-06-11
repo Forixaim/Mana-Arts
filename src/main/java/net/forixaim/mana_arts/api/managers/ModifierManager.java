@@ -3,6 +3,7 @@ package net.forixaim.mana_arts.api.managers;
 import com.google.common.collect.Maps;
 import net.forixaim.mana_arts.api.data.spell.SpellModifier;
 import net.forixaim.mana_arts.registry.ManaArtsRegistries;
+import net.forixaim.mana_arts.world.entity.spell.SpellProjectile;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 
@@ -12,7 +13,7 @@ public final class ModifierManager
 {
     private ModifierManager() {}
 
-    private static final Map<ResourceLocation, Holder<SpellModifier<?>>> MODIFIERS = Maps.newHashMap();
+    private static final Map<ResourceLocation, Holder<SpellModifier<? extends SpellProjectile>>> MODIFIERS = Maps.newHashMap();
 
     public static void load()
     {
@@ -20,12 +21,12 @@ public final class ModifierManager
         ManaArtsRegistries.SPELL_MODIFIERS.holders().forEach(modifier -> MODIFIERS.put(modifier.key().location(), modifier));
     }
 
-    public static Holder<SpellModifier<?>> getModifier(ResourceLocation id)
+    public static Holder<SpellModifier<? extends SpellProjectile>> getModifier(ResourceLocation id)
     {
         return MODIFIERS.get(id);
     }
 
-    public static Holder<SpellModifier<?>> getModifier(String id)
+    public static Holder<SpellModifier<? extends SpellProjectile>> getModifier(String id)
     {
         return MODIFIERS.get(ResourceLocation.tryParse(id));
     }

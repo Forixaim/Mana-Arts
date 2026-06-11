@@ -5,6 +5,7 @@ import net.forixaim.mana_arts.api.data.internal.CastContext;
 import net.forixaim.mana_arts.api.data.spell.Spell;
 import net.forixaim.mana_arts.api.managers.ElementManager;
 import net.forixaim.mana_arts.api.managers.SpellManager;
+import net.forixaim.mana_arts.registry.entries.ManaArtsSpells;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -37,6 +38,11 @@ public abstract class SpellProjectile extends Projectile
         this.builtContext = context;
         this.cachedSpell = SpellManager.getSpell(context.spell());
         this.cachedElement = ElementManager.getElement(context.element());
+    }
+
+    @Override
+    public void onAddedToLevel() {
+        super.onAddedToLevel();
     }
 
     public CastContext getCastContext() {

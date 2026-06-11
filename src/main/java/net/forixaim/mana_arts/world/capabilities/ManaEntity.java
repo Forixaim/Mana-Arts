@@ -6,12 +6,12 @@ import net.forixaim.mana_arts.DeveloperSwitches;
 import net.forixaim.mana_arts.ManaArts;
 import net.forixaim.mana_arts.api.data.element.Element;
 import net.forixaim.mana_arts.api.data.internal.SpellContainer;
+import net.forixaim.mana_arts.api.data.spell.Spell;
 import net.forixaim.mana_arts.api.managers.ElementManager;
+import net.forixaim.mana_arts.api.managers.SpellManager;
 import net.forixaim.mana_arts.client.ui.screen.spell_menu.SpellScreen;
-import net.forixaim.mana_arts.netcode.server.mana_entity.CurrentSpellIndexSync;
-import net.forixaim.mana_arts.netcode.server.mana_entity.ManaEntityPacket;
-import net.forixaim.mana_arts.netcode.server.mana_entity.ManaValueSync;
-import net.forixaim.mana_arts.netcode.server.mana_entity.SpellElementSync;
+import net.forixaim.mana_arts.netcode.ManaArtsPayloadHandler;
+import net.forixaim.mana_arts.netcode.server.mana_entity.*;
 import net.forixaim.mana_arts.registry.entries.ManaArtsAttributes;
 import net.forixaim.mana_arts.registry.entries.ManaArtsElements;
 import net.forixaim.mana_arts.registry.entries.ManaArtsSpells;
@@ -44,7 +44,9 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
 {
     private double mana;
     private double overchargeReserve;
+    private SpellContainer queuedSpell;
     private final List<Holder<Element>> elements;
+    private final List<Holder<Spell>> learnedSpells;
     private final List<SpellContainer> spells;
     private IAttachmentHolder original;
     private int currentSpell;
@@ -66,6 +68,10 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
         }
     }
 
+    public SpellContainer getQueuedSpell() {
+        return queuedSpell;
+    }
+
     public void onSyncSpell(CurrentSpellIndexSync packet)
     {
         currentSpell = packet.index();
@@ -77,6 +83,16 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
                 spellScreen.sync();
             }
         }
+    }
+
+    public void queueSpell()
+    {
+        queuedSpell = getCurrentSpell();
+    }
+
+    public void clearQueuedSpell()
+    {
+        queuedSpell = null;
     }
 
     public void cycleNextSpell() {
@@ -107,15 +123,21 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
     public void debugInit()
     {
         spells.clear();
-        SpellContainer spell = new SpellContainer();
-        spell.setSpell(ManaArtsSpells.BLAST);
-        spell.setElement(ManaArtsElements.LIGHT);
-        addSpell(spell);
-        setCurrentSpell(spells.indexOf(spell));
+        learnedSpells.clear();
+        elements.clear();
+        learnedSpells.add(ManaArtsSpells.BLAST);
+        elements.add(ManaArtsElements.LIGHT);
+        elements.add(ManaArtsElements.FIRE);
     }
 
     public List<SpellContainer> getSpells() {
         return spells;
+    }
+
+    public void modifySpell(SpellContainer spell, int index)
+    {
+        spells.set(index, spell);
+        sync(SyncType.SPELLS);
     }
 
     public void addSpell(SpellContainer spell) {
@@ -123,9 +145,11 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
         sync(SyncType.SPELLS);
     }
 
-    public void removeSpell(SpellContainer spell) {
-        if (!spells.contains(spell)) return;
-        spells.remove(spell);
+    public void removeSpell(int index) {
+        if (index < 0 || index >= spells.size()) return;
+        spells.remove(index);
+        if (spells.isEmpty())
+            setCurrentSpell(-1);
         sync(SyncType.SPELLS);
     }
 
@@ -145,6 +169,21 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
         return ImmutableList.copyOf(elements);
     }
 
+    public List<Holder<Spell>> getLearnedSpells() {
+        return ImmutableList.copyOf(learnedSpells);
+    }
+
+    public void addLearnedSpell(Holder<Spell> spell) {
+        if (learnedSpells.contains(spell)) return;
+        learnedSpells.add(spell);
+        CompoundTag sendData = createSendData();
+        LearnedDataSync packet = new LearnedDataSync(sendData);
+        if (original instanceof ServerPlayer serverPlayer)
+        {
+            PacketDistributor.sendToPlayer(serverPlayer, packet);
+        }
+    }
+
     public double getMana() {
         return this.mana;
     }
@@ -154,6 +193,7 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
         mana = 0;
         elements = Lists.newArrayList();
         spells = Lists.newArrayList();
+        learnedSpells = Lists.newArrayList();
         currentSpell = -1;
         if (DeveloperSwitches.DEBUG_MODE)
         {
@@ -281,7 +321,7 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
         return result;
     }
 
-    private List<Holder<Element>> deserializeElements(ListTag elements)
+    public List<Holder<Element>> deserializeElements(ListTag elements)
     {
         List<Holder<Element>> result = Lists.newArrayList();
         for (int i = 0; i < elements.size(); i++)
@@ -302,6 +342,34 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
         return result;
     }
 
+    private ListTag serializeLearnedSpells()
+    {
+        ListTag result = new ListTag();
+        for (Holder<Spell> spell : learnedSpells)
+        {
+            result.add(StringTag.valueOf(spell.getRegisteredName()));
+        }
+        return result;
+    }
+
+    private CompoundTag createSendData()
+    {
+        CompoundTag result = new CompoundTag();
+        result.put("elements", serializeElements());
+        result.put("spells", serializeLearnedSpells());
+        return result;
+    }
+
+    public List<Holder<Spell>> deserializeLearnedSpells(ListTag spells)
+    {
+        List<Holder<Spell>> result = Lists.newArrayList();
+        for (int i = 0; i < spells.size(); i++)
+        {
+            result.add(SpellManager.getSpell(ResourceLocation.tryParse(spells.getString(i))));
+        }
+        return result;
+    }
+
     public CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider)
     {
         ManaArts.LOGGER.debug("Serializing ManaEntity {} for {} side", original, FMLEnvironment.dist.name());
@@ -310,6 +378,7 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
         result.putInt("currentSpell", currentSpell);
         result.put("elements", serializeElements());
         result.put("spells", serializeSpells());
+        result.put("learnedSpells", serializeLearnedSpells());
         return result;
     }
 
@@ -333,6 +402,11 @@ public class ManaEntity implements INBTSerializable<CompoundTag>
         {
             ListTag spells = tag.getList("spells", Tag.TAG_COMPOUND);
             this.spells.addAll(deserializeSpells(spells));
+        }
+        if (tag.contains("learnedSpells", Tag.TAG_LIST))
+        {
+            ListTag spells = tag.getList("learnedSpells", Tag.TAG_STRING);
+            this.learnedSpells.addAll(deserializeLearnedSpells(spells));
         }
     }
 

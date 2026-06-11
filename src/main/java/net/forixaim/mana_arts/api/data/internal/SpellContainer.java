@@ -8,14 +8,19 @@ import net.forixaim.mana_arts.api.managers.ElementManager;
 import net.forixaim.mana_arts.api.managers.ModifierManager;
 import net.forixaim.mana_arts.api.managers.SpellManager;
 import net.forixaim.mana_arts.netcode.client.CastRequest;
+import net.forixaim.mana_arts.registry.entries.ManaArtsAnimations;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.ApiStatus;
+import yesman.epicfight.api.animation.Joint;
+import yesman.epicfight.world.capabilities.EpicFightCapabilities;
+import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 
 import java.util.Map;
 
@@ -99,8 +104,16 @@ public class SpellContainer
     }
 
 
-    public void handleCast(CastContext context, Player player) {
-        spell.value().cast(player, context);
+    public void handleCast(CastContext context, LivingEntity player) {
+        spell.value().cast(player, context, null);
+    }
+
+    public void handleCast(CastContext context, LivingEntity livingEntity, Joint joint) {
+        spell.value().cast(livingEntity, context, joint);
+    }
+
+    public void handleCastEpicFight(LivingEntityPatch<?> entitypatch) {
+        entitypatch.playAnimationSynchronized(ManaArtsAnimations.CAST, 0);
     }
 
     public CompoundTag serialize()
@@ -128,7 +141,7 @@ public class SpellContainer
         }
         if (tag.contains("modifiers"))
         {
-            Map<ResourceLocation, Double> modifiers = SerializerHelper.deserializeModifiers(tag.getCompound("modifiers"));
+            Map<ResourceLocation, Double> modifiers = SerializerHelper.deserializeModifiers(tag);
             result.modifiers.putAll(modifiers);
         }
         return result;

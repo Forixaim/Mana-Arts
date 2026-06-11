@@ -15,9 +15,11 @@ public class InputHandler
     {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;
+
         if (ManaArtsKeyMapping.CAST_SPELL.consumeClick())
         {
             ManaEntity mana = player.getData(ManaArtsAttachments.MANA_ENTITY);
+            if (mana.getCurrentSpellIndex() == -1) return;
             mana.getCurrentSpell().sendCastRequest();
         }
 

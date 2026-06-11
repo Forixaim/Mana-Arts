@@ -8,4 +8,5 @@ public interface ManaSourceTags
 {
     TagKey<ManaSource> MANUAL_CHARGING = TagKey.create(ManaArtsRegistries.RegistryKeys.MANA_SOURCE_TAGS, ManaArts.identifier("manual_charging"));
     TagKey<ManaSource> PASSIVE_REGENERATION = TagKey.create(ManaArtsRegistries.RegistryKeys.MANA_SOURCE_TAGS, ManaArts.identifier("passive_regeneration"));
+    TagKey<ManaSource> MANA_COST = TagKey.create(ManaArtsRegistries.RegistryKeys.MANA_SOURCE_TAGS, ManaArts.identifier("mana_cost"));
 }

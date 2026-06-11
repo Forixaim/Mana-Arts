@@ -12,5 +12,7 @@
   "modifier.mana_arts.projectile_size": "Projectile Size",
   "modifier.mana_arts.blast_radius": "Blast Radius",
   "element.mana_arts.light": "Light",
-  "spell.mana_arts.blast": "Blast"
+  "spell.mana_arts.blast": "Blast",
+  "text.spell_delete": "Forget Spell",
+  "text.spell_edit": "Edit Spell"
 }

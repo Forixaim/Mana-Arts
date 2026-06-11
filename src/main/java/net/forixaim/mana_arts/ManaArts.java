@@ -4,11 +4,15 @@ import com.mojang.logging.LogUtils;
 import net.forixaim.mana_arts.api.loaders.ElementReloadListener;
 import net.forixaim.mana_arts.api.loaders.ModifierListener;
 import net.forixaim.mana_arts.api.loaders.SpellReloadListener;
+import net.forixaim.mana_arts.client.particles.Explosion;
+import net.forixaim.mana_arts.client.particles.LightGlimmerParticle;
 import net.forixaim.mana_arts.client.renderer.BlastRenderer;
 import net.forixaim.mana_arts.events.ClientEvents;
 import net.forixaim.mana_arts.registry.ManaArtsRegistries;
+import net.forixaim.mana_arts.registry.entries.ManaArtsAnimations;
 import net.forixaim.mana_arts.registry.entries.ManaArtsAttributes;
 import net.forixaim.mana_arts.registry.entries.ManaArtsEntities;
+import net.forixaim.mana_arts.registry.entries.ManaArtsParticles;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.api.distmarker.Dist;
@@ -21,6 +25,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
@@ -43,6 +48,7 @@ public final class ManaArts
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(ManaArtsRegistries::onRegister);
         modEventBus.addListener(this::modifyAttributes);
+        modEventBus.addListener(ManaArtsAnimations::init);
         ManaArtsRegistries.REGISTERS.forEach(reg -> reg.register(modEventBus));
         NeoForge.EVENT_BUS.addListener(this::addReloadListeners);
         container.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
@@ -59,8 +65,15 @@ public final class ManaArts
     private void handleClientEvents(IEventBus modEventBus, ModContainer container)
     {
         modEventBus.addListener(ClientEvents::registerGuiLayers);
+        modEventBus.addListener(this::registerParticles);
     }
     private void commonSetup(final FMLCommonSetupEvent event) {
+    }
+
+    public void registerParticles(final RegisterParticleProvidersEvent event)
+    {
+        event.registerSpriteSet(ManaArtsParticles.LIGHT_GLIMMER.get(), LightGlimmerParticle.Provider::new);
+        event.registerSpecial(ManaArtsParticles.EXPLOSION.get(), new Explosion.Provider());
     }
 
     public void addReloadListeners(AddReloadListenerEvent event)

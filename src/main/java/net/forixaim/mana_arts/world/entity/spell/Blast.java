@@ -1,6 +1,9 @@
 package net.forixaim.mana_arts.world.entity.spell;
 
+import net.forixaim.mana_arts.api.data.element.Element;
 import net.forixaim.mana_arts.api.data.element.ParticleEffects;
+import net.forixaim.mana_arts.api.managers.ElementManager;
+import net.forixaim.mana_arts.registry.entries.ManaArtsSpells;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
