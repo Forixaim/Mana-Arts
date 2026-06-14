@@ -11,4 +11,9 @@ public record ParticleEffects(
         BiConsumer<Vec3, Level> onHitBlock,
         BiConsumer<Vec3, Level> onHitEntity,
         BiConsumer<Vec3, Level> onExpire
-) {}
+) {
+    public static class Builder
+    {
+
+    }
+}

@@ -85,7 +85,7 @@ public abstract class SpellProjectile extends Projectile
             {
                 resultingScale *= (float) getCastContext().element().value().sizeModifier();
             }
-            if (scaleModifiers != null && !scaleModifiers.isEmpty())
+            if (!scaleModifiers.isEmpty())
             {
                 float totalScaleFromModifiers = 0;
                 for (var modifier : scaleModifiers)
@@ -94,15 +94,14 @@ public abstract class SpellProjectile extends Projectile
                 }
                 resultingScale *= totalScaleFromModifiers;
             }
+            if (getCastContext().modifiers().containsKey(ManaArtsSpellModifiers.PROJECTILE_SIZE))
+            {
+                ManaArts.LOGGER.debug("Projectile size modifier: {}", getCastContext().modifiers().get(ManaArtsSpellModifiers.PROJECTILE_SIZE));
+                resultingScale *= (getCastContext().modifiers().get(ManaArtsSpellModifiers.PROJECTILE_SIZE).floatValue() / 100f);
+            }
         }
 
         return resultingScale;
-    }
-
-
-    @Override
-    protected @NotNull AABB makeBoundingBox() {
-        return super.makeBoundingBox().inflate(getTotalScaleModifier());
     }
 
     @Override

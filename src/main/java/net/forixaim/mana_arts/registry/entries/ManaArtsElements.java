@@ -65,6 +65,7 @@ public class ManaArtsElements
                             poseStack.translate(0.0D, 0.5D, 0.0D);
                             if (pEntity.getCastContext() != null) {
                                 double scale = pEntity.getTotalScaleModifier() * 4;
+                                ManaArts.LOGGER.debug("Scale: {}", scale);
                                 poseStack.scale((float) scale, (float) scale, (float) scale);
                             }
 
