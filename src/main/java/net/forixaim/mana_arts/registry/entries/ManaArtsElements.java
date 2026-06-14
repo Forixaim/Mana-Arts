@@ -64,7 +64,7 @@ public class ManaArtsElements
                             Vector4i color = new Vector4i(255,255,255,0);
                             poseStack.translate(0.0D, 0.5D, 0.0D);
                             if (pEntity.getCastContext() != null) {
-                                double scale = ElementManager.getElement(pEntity.getCastContext().element()).value().sizeModifier() * 4;
+                                double scale = pEntity.getTotalScaleModifier() * 4;
                                 poseStack.scale((float) scale, (float) scale, (float) scale);
                             }
 

@@ -10,6 +10,8 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.Holder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public abstract class SpellProjectileRenderer<T extends SpellProjectile> extends EntityRenderer<T>
 {
     protected SpellProjectileRenderer(EntityRendererProvider.Context context)
@@ -22,7 +24,8 @@ public abstract class SpellProjectileRenderer<T extends SpellProjectile> extends
         if (pEntity.getCastContext() == null) return false;
         if (pEntity.getCastContext().element() != null)
         {
-            Holder<Element> element = ElementManager.getElement(pEntity.getCastContext().element());
+            Holder<Element> element = pEntity.getCastContext().element();
+            if (element == null) return false;
             return element.value().table().getProjectileRenderOverrides().containsKey(pEntity.getType());
         }
         return false;
@@ -33,7 +36,7 @@ public abstract class SpellProjectileRenderer<T extends SpellProjectile> extends
     {
         if (pEntity.getCastContext() != null && pEntity.getCastContext().element() != null)
         {
-            Holder<Element> element = ElementManager.getElement(pEntity.getCastContext().element());
+            Holder<Element> element = pEntity.getCastContext().element();
             if (element.value().table().getProjectileRenderOverrides().containsKey(pEntity.getType()))
             {
                 element.value().table().getProjectileRenderOverrides().get(pEntity.getType()).accept(pEntity, entityYaw, partialTick, poseStack, bufferSource, packedLight, this);

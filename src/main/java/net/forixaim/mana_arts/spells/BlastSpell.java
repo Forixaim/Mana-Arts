@@ -9,6 +9,7 @@ import net.forixaim.mana_arts.registry.entries.ManaArtsSpellModifiers;
 import net.forixaim.mana_arts.registry.entries.ManaArtsSpells;
 import net.forixaim.mana_arts.world.entity.spell.Blast;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import yesman.epicfight.api.animation.Joint;
@@ -34,7 +35,7 @@ public class BlastSpell extends OffensiveSpell {
     @Override
     public void castEpicFight(LivingEntityPatch<? extends LivingEntity> entityPatch, CastContext context, Joint castingJoint) {
         super.castEpicFight(entityPatch, context, castingJoint);
-        Element element = ElementManager.getElement(context.element()).value();
+        Element element = context.element().value();
         Blast blast = ManaArtsEntities.BLAST.get().create(entityPatch.getOriginal().level());
         if (blast == null) return;
         Vec3 pos = new Vec3(entityPatch.getOriginal().getX(), entityPatch.getOriginal().getEyeY() - (blast.getBoundingBox().getYsize() / 2), entityPatch.getOriginal().getZ());
@@ -56,7 +57,7 @@ public class BlastSpell extends OffensiveSpell {
     @Override
     public void castVanilla(LivingEntity entity, CastContext context) {
         super.castVanilla(entity, context);
-        Element element = ElementManager.getElement(context.element()).value();
+        Element element = context.element().value();
         Blast blast = ManaArtsEntities.BLAST.get().create(entity.level());
         if (blast == null) return;
         blast.setOwner(entity);

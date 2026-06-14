@@ -36,14 +36,17 @@ public class BlastRenderer extends SpellProjectileRenderer<Blast>
         }
 
         poseStack.pushPose();
+        Vector4i color = new Vector4i(255, 255, 255, 255);
 
-        Element element = ElementManager.getElement(pEntity.getCastContext().element()).value();
-        Vector4i color = new Vector4i(element.table().getColor());
+        if (pEntity.getCastContext() != null && pEntity.getCastContext().element() != null) {
+            Element element = pEntity.getCastContext().element().value();
+            color = new Vector4i(element.table().getColor());
+        }
 
 
 
-        if (pEntity.getCastContext() != null) {
-            double scale = ElementManager.getElement(pEntity.getCastContext().element()).value().sizeModifier();
+        if (pEntity.getCastContext() != null && pEntity.getCastContext().element() != null) {
+            double scale = pEntity.getCastContext().element().value().sizeModifier();
             poseStack.scale((float) scale, (float) scale, (float) scale);
         }
 

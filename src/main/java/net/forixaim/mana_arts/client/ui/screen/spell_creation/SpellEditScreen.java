@@ -131,8 +131,7 @@ public class SpellEditScreen extends Screen
         {
             selectedSpellIndex = learnedSpells.indexOf(mage.getSpells().get(editingIndex).getSpell());
             selectedElementIndex = learnedElements.indexOf(mage.getSpells().get(editingIndex).getElement());
-            mage.getSpells().get(editingIndex).getModifiers().forEach((k, v) -> {
-                Holder<SpellModifier<? extends SpellProjectile>> holder = ModifierManager.getModifier(k);
+            mage.getSpells().get(editingIndex).getModifiers().forEach((holder, v) -> {
                 if (holder != null)
                 {
                     modifiers.put(holder, v);

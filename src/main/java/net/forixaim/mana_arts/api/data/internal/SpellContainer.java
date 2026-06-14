@@ -4,11 +4,13 @@ import com.google.common.collect.Maps;
 import net.forixaim.mana_arts.api.data.element.Element;
 import net.forixaim.mana_arts.api.data.spell.Spell;
 import net.forixaim.mana_arts.api.data.serializers.SerializerHelper;
+import net.forixaim.mana_arts.api.data.spell.SpellModifier;
 import net.forixaim.mana_arts.api.managers.ElementManager;
 import net.forixaim.mana_arts.api.managers.ModifierManager;
 import net.forixaim.mana_arts.api.managers.SpellManager;
 import net.forixaim.mana_arts.netcode.client.CastRequest;
 import net.forixaim.mana_arts.registry.entries.ManaArtsAnimations;
+import net.forixaim.mana_arts.world.entity.spell.SpellProjectile;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -29,7 +31,7 @@ public class SpellContainer
 {
     private Holder<Element> element;
     private Holder<Spell> spell;
-    private final Map<ResourceLocation, Double> modifiers;
+    private final Map<Holder<SpellModifier<? extends SpellProjectile>>, Double> modifiers;
 
     public SpellContainer() {
         modifiers = Maps.newHashMap();
@@ -68,12 +70,12 @@ public class SpellContainer
         return element;
     }
 
-    public Map<ResourceLocation, Double> getModifiers()
+    public Map<Holder<SpellModifier<? extends SpellProjectile>>, Double> getModifiers()
     {
         return modifiers;
     }
 
-    public void setModifiers(Map<ResourceLocation, Double> modifiers)
+    public void setModifiers(Map<Holder<SpellModifier<? extends SpellProjectile>>, Double> modifiers)
     {
         this.modifiers.putAll(modifiers);
     }
@@ -88,7 +90,7 @@ public class SpellContainer
     {
         this.modifiers.clear();
         this.spell.value().getAllowedModifiers().forEach(
-                holder -> this.modifiers.put(holder, ModifierManager.getModifier(holder).value().defaultValue())
+                holder -> this.modifiers.put(holder, holder.value().defaultValue())
         );
     }
 
@@ -100,7 +102,7 @@ public class SpellContainer
     }
 
     public CastContext buildContext() {
-        return new CastContext(ResourceLocation.parse(spell.getRegisteredName()), ResourceLocation.parse(element.getRegisteredName()), modifiers);
+        return new CastContext(spell, element, modifiers);
     }
 
 
@@ -141,7 +143,7 @@ public class SpellContainer
         }
         if (tag.contains("modifiers"))
         {
-            Map<ResourceLocation, Double> modifiers = SerializerHelper.deserializeModifiers(tag);
+            Map<Holder<SpellModifier<? extends SpellProjectile>>, Double> modifiers = SerializerHelper.deserializeModifiers(tag);
             result.modifiers.putAll(modifiers);
         }
         return result;

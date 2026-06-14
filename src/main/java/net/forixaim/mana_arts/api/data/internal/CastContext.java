@@ -5,8 +5,11 @@ import net.forixaim.mana_arts.api.data.element.Element;
 import net.forixaim.mana_arts.api.data.serializers.SerializerHelper;
 import net.forixaim.mana_arts.api.data.spell.OffensiveSpell;
 import net.forixaim.mana_arts.api.data.spell.Spell;
+import net.forixaim.mana_arts.api.data.spell.SpellModifier;
 import net.forixaim.mana_arts.api.managers.ElementManager;
 import net.forixaim.mana_arts.api.managers.SpellManager;
+import net.forixaim.mana_arts.world.entity.spell.SpellProjectile;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -17,7 +20,7 @@ import java.util.Map;
 /**
  * A serializable class that holds the context of a spell cast.
  */
-public record CastContext(ResourceLocation spell, ResourceLocation element, Map<ResourceLocation, Double> modifiers)
+public record CastContext(Holder<Spell> spell, Holder<Element> element, Map<Holder<SpellModifier<? extends SpellProjectile>>, Double> modifiers)
 {
     public static final StreamCodec<ByteBuf, CastContext> STREAM_CODEC =
             ByteBufCodecs.COMPOUND_TAG.map(CastContext::deserialize, CastContext::serialize);
@@ -33,17 +36,16 @@ public record CastContext(ResourceLocation spell, ResourceLocation element, Map<
 
     public float calculateDamage()
     {
-        Spell spell = SpellManager.getSpell(this.spell).value();
-        Element element = ElementManager.getElement(this.element).value();
+
         if (spell instanceof OffensiveSpell offensiveSpell)
         {
-            return (float) (offensiveSpell.getBaseDamage() * element.damageModifier());
+            return (float) (offensiveSpell.getBaseDamage() * element.value().damageModifier());
         }
         return 0;
     }
 
     public static CastContext deserialize(CompoundTag tag)
     {
-        return new CastContext(ResourceLocation.tryParse(tag.getString("spell")), ResourceLocation.tryParse(tag.getString("element")), SerializerHelper.deserializeModifiers(tag.getCompound("modifiers")));
+        return new CastContext(SpellManager.getSpell(ResourceLocation.tryParse(tag.getString("spell"))), ElementManager.getElement(ResourceLocation.tryParse(tag.getString("element"))), SerializerHelper.deserializeModifiers(tag));
     }
 }

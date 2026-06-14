@@ -29,15 +29,15 @@ public abstract class Spell
 {
     protected ResourceLocation id;
     public double baseCost;
-    protected final List<ResourceLocation> allowedModifiers = Lists.newArrayList();
+    protected final List<Holder<SpellModifier<? extends SpellProjectile>>> allowedModifiers = Lists.newArrayList();
 
-    public List<ResourceLocation> getAllowedModifiers() {
+    public List<Holder<SpellModifier<? extends SpellProjectile>>> getAllowedModifiers() {
         return ImmutableList.copyOf(allowedModifiers);
     }
 
     public void addAllowedModifier(Holder<SpellModifier<? extends SpellProjectile>> id)
     {
-        allowedModifiers.add(ResourceLocation.parse(id.getRegisteredName()));
+        allowedModifiers.add(id);
     }
 
     public Spell(ResourceLocation id) {
@@ -46,10 +46,7 @@ public abstract class Spell
 
     public Map<Holder<SpellModifier<? extends SpellProjectile>>, Double> initDefaultModifiers() {
         Map<Holder<SpellModifier<? extends SpellProjectile>>, Double> result = Maps.newHashMap();
-        allowedModifiers.forEach(id -> {
-            Holder<SpellModifier<? extends SpellProjectile>> holder = ModifierManager.getModifier(id);
-            result.put(holder, holder.value().defaultValue());
-        });
+        allowedModifiers.forEach(holder -> result.put(holder, holder.value().defaultValue()));
         return result;
     }
 
@@ -79,7 +76,7 @@ public abstract class Spell
 
     public void cast(LivingEntity entity, CastContext context, Joint joint) {
         vanillaOrEpicFight(entity, context, this::castVanilla, this::castEpicFight, joint);
-        Element element = ElementManager.getElement(context.element()).value();
+        Element element = context.element().value();
         Holder<Spell> self = SpellManager.getSpell(this.id);
         if (element.table().getEffectFor(self) != null)
         {

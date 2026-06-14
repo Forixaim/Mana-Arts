@@ -58,7 +58,7 @@ public abstract class DetonatingSpellProjectile extends SpellProjectile
 
     protected void detonate()
     {
-        Element element = ElementManager.getElement(getCastContext().element()).value();
+        Element element = getCastContext().element().value();
         Entity owner = getOwner();
         DamageSource magicDamage;
         if (owner instanceof LivingEntity livingEntity)
@@ -76,7 +76,7 @@ public abstract class DetonatingSpellProjectile extends SpellProjectile
         {
             magicDamage = level().damageSources().magic();
         }
-        Holder<Spell> spell = SpellManager.getSpell(getCastContext().spell());
+        Holder<Spell> spell = getCastContext().spell();
         if (element.table().getEffects().containsKey(spell))
         {
             element.table().getEffectFor(spell).onExpire().accept(this.position(), this.level());
